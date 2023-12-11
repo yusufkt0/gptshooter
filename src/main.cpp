@@ -23,6 +23,9 @@ bool checkCollision(const Entity& entity, const Entity& other);
 
 void handleInput(Entity& entity, std::vector<Projectile>& projectiles, Uint32& lastProjectileTime) {
     SDL_Event e;
+    double acceleration = 0.2; // You can adjust this value based on your preference
+    double maxSpeed = 0.2;      // Adjust this to limit the maximum speed
+
     while (SDL_PollEvent(&e) != 0) {
         if (e.type == SDL_QUIT) {
             SDL_Quit();
@@ -30,16 +33,16 @@ void handleInput(Entity& entity, std::vector<Projectile>& projectiles, Uint32& l
         } else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
             switch (e.key.keysym.sym) {
                 case SDLK_UP:
-                    entity.ySpeed = (e.type == SDL_KEYDOWN) ? -0.2 : 0.0;
+                    entity.ySpeed += (e.type == SDL_KEYDOWN) ? -acceleration : acceleration;
                     break;
                 case SDLK_DOWN:
-                    entity.ySpeed = (e.type == SDL_KEYDOWN) ? 0.2 : 0.0;
+                    entity.ySpeed += (e.type == SDL_KEYDOWN) ? acceleration : -acceleration;
                     break;
                 case SDLK_LEFT:
-                    entity.xSpeed = (e.type == SDL_KEYDOWN) ? -0.2 : 0.0;
+                    entity.xSpeed += (e.type == SDL_KEYDOWN) ? -acceleration : acceleration;
                     break;
                 case SDLK_RIGHT:
-                    entity.xSpeed = (e.type == SDL_KEYDOWN) ? 0.2 : 0.0;
+                    entity.xSpeed += (e.type == SDL_KEYDOWN) ? acceleration : -acceleration;
                     break;
                 case SDLK_SPACE:
                     Uint32 currentTime = SDL_GetTicks();
@@ -50,7 +53,7 @@ void handleInput(Entity& entity, std::vector<Projectile>& projectiles, Uint32& l
                         projectile.rect.w = 10;
                         projectile.rect.h = 10;
                         projectile.xSpeed = 0;
-                        projectile.ySpeed = -0.2;
+                        projectile.ySpeed = -0.1;
                         projectile.active = true;
 
                         projectiles.push_back(projectile);
@@ -60,6 +63,10 @@ void handleInput(Entity& entity, std::vector<Projectile>& projectiles, Uint32& l
             }
         }
     }
+
+    // Apply speed limits to prevent excessive acceleration
+    entity.xSpeed = std::clamp(entity.xSpeed, -maxSpeed, maxSpeed);
+    entity.ySpeed = std::clamp(entity.ySpeed, -maxSpeed, maxSpeed);
 }
 
 void updateEntity(Entity& entity, Uint32 deltaTime) {
