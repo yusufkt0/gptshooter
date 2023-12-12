@@ -53,7 +53,7 @@ void handleInput(Entity& entity, std::vector<Projectile>& projectiles, Uint32& l
                         projectile.rect.w = 10;
                         projectile.rect.h = 10;
                         projectile.xSpeed = 0;
-                        projectile.ySpeed = -0.1;
+                        projectile.ySpeed = -0.5;
                         projectile.active = true;
 
                         projectiles.push_back(projectile);
