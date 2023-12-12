@@ -1,6 +1,8 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
+#include <SDL2/SDL_image.h>
 #include <algorithm>
 #include <vector>
 
@@ -10,7 +12,23 @@ struct Entity {
     double ySpeed;
     double enYspeed = -0.4;
 };
+SDL_Texture* loadTexture(SDL_Renderer* renderer, const std::string& filePath) {
+    SDL_Texture* texture = nullptr;
+    SDL_Surface* surface = IMG_Load("/home/yasfur/Documents/wsad/proj/Untitled.png");
 
+    if (surface) {
+        texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_FreeSurface(surface);
+
+        if (!texture) {
+            std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
+        }
+    } else {
+        std::cerr << "Error loading image: " << IMG_GetError() << std::endl;
+    }
+
+    return texture;
+}
 struct Projectile : Entity {
     bool active;
 };
@@ -79,6 +97,7 @@ void updateEntity(Entity& entity, Uint32 deltaTime) {
 
 // ...
 
+
 void updateProjectiles(std::vector<Projectile>& projectiles, Uint32 deltaTime, std::vector<Enemy>& enemies, int& score) {
     projectiles.erase(std::remove_if(projectiles.begin(), projectiles.end(),
                                      [](const Projectile& p) { return !p.active; }),
@@ -131,7 +150,6 @@ bool checkGameOver(const Entity& entity, const std::vector<Enemy>& enemies) {
     }
     return false;
 }
-
 void render(SDL_Renderer* renderer, const Entity& entity, const std::vector<Projectile>& projectiles, const std::vector<Enemy>& enemies, int score, TTF_Font* font) {
     // Set the background color to dark blue
     SDL_SetRenderDrawColor(renderer, 0, 0, 128, 255); // Dark blue color for the background
@@ -221,6 +239,12 @@ int main(int argc, char* argv[]) {
     Uint32 lastTime = SDL_GetTicks();
     while (!quit) {
         handleInput(entity, projectiles, lastProjectileTime);
+        SDL_Texture* entityTexture = loadTexture(renderer, "/home/yasfur/Documents/wsad/proj/Untitled.png");
+    if (!entityTexture) {
+        return 1;
+    }
+    
+    
 
         Uint32 currentTime = SDL_GetTicks();
         Uint32 deltaTime = currentTime - lastTime;
@@ -260,6 +284,7 @@ int main(int argc, char* argv[]) {
     
 
     // Cleanup and exit
+    
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_CloseFont(font);
