@@ -215,7 +215,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Load a font
-    TTF_Font* font = TTF_OpenFont("/home/yasfur/Documents/wsad/proj/Arial.ttf", 24);
+    TTF_Font* font = TTF_OpenFont("/home/yasfur/Documents/gptshooter/Arial.ttf", 24);
     if (font == nullptr) {
         std::cerr << "Failed to load font! TTF_Error: " << TTF_GetError() << std::endl;
         return 1;
